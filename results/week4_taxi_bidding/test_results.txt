@@ -1,0 +1,32 @@
+test_allocation_waits_for_initial_bid_window (test_dispatcher_optimisation.DispatcherOptimisationTests.test_allocation_waits_for_initial_bid_window) ... ok
+test_duplicate_bid_indices_do_not_affect_selection (test_dispatcher_optimisation.DispatcherOptimisationTests.test_duplicate_bid_indices_do_not_affect_selection) ... ok
+test_fairness_breaks_near_tie_in_favour_of_less_used_taxi (test_dispatcher_optimisation.DispatcherOptimisationTests.test_fairness_breaks_near_tie_in_favour_of_less_used_taxi) ... ok
+test_ignores_off_duty_and_unreachable_bidders (test_dispatcher_optimisation.DispatcherOptimisationTests.test_ignores_off_duty_and_unreachable_bidders) ... ok
+test_invalid_fare_location_does_not_allocate (test_dispatcher_optimisation.DispatcherOptimisationTests.test_invalid_fare_location_does_not_allocate) ... ok
+test_price_is_bounded_and_increases_with_trip_distance (test_dispatcher_optimisation.DispatcherOptimisationTests.test_price_is_bounded_and_increases_with_trip_distance) ... ok
+test_route_distance_returns_infinity_for_unreachable_nodes (test_dispatcher_optimisation.DispatcherOptimisationTests.test_route_distance_returns_infinity_for_unreachable_nodes) ... ok
+test_route_distance_uses_lowest_cost_road_route (test_dispatcher_optimisation.DispatcherOptimisationTests.test_route_distance_uses_lowest_cost_road_route) ... ok
+test_selects_shortest_approach_when_fairness_is_equal (test_dispatcher_optimisation.DispatcherOptimisationTests.test_selects_shortest_approach_when_fairness_is_equal) ... ok
+test_avoids_blocked_or_removed_direct_edge (test_path_planning.DijkstraPathPlanningTests.test_avoids_blocked_or_removed_direct_edge) ... ok
+test_direct_route (test_path_planning.DijkstraPathPlanningTests.test_direct_route) ... ok
+test_missing_origin_preserves_starter_convention (test_path_planning.DijkstraPathPlanningTests.test_missing_origin_preserves_starter_convention) ... ok
+test_route_edges_are_valid (test_path_planning.DijkstraPathPlanningTests.test_route_edges_are_valid) ... ok
+test_same_origin_and_destination (test_path_planning.DijkstraPathPlanningTests.test_same_origin_and_destination) ... ok
+test_selects_minimum_total_distance_not_fewest_edges (test_path_planning.DijkstraPathPlanningTests.test_selects_minimum_total_distance_not_fewest_edges) ... ok
+test_unknown_node_returns_empty_path (test_path_planning.DijkstraPathPlanningTests.test_unknown_node_returns_empty_path) ... ok
+test_unreachable_destination_returns_empty_path (test_path_planning.DijkstraPathPlanningTests.test_unreachable_destination_returns_empty_path) ... ok
+test_bids_on_profitable_fare_with_nearby_pickup (test_taxi_bidding.TaxiBiddingTests.test_bids_on_profitable_fare_with_nearby_pickup) ... ok
+test_declines_fare_with_negative_expected_return (test_taxi_bidding.TaxiBiddingTests.test_declines_fare_with_negative_expected_return) ... ok
+test_declines_if_account_cannot_fund_approach (test_taxi_bidding.TaxiBiddingTests.test_declines_if_account_cannot_fund_approach) ... ok
+test_declines_if_already_carrying_passenger (test_taxi_bidding.TaxiBiddingTests.test_declines_if_already_carrying_passenger) ... ok
+test_declines_if_another_fare_is_allocated (test_taxi_bidding.TaxiBiddingTests.test_declines_if_another_fare_is_allocated) ... ok
+test_declines_non_finite_travel_time (test_taxi_bidding.TaxiBiddingTests.test_declines_non_finite_travel_time) ... ok
+test_declines_unreachable_trip (test_taxi_bidding.TaxiBiddingTests.test_declines_unreachable_trip) ... ok
+test_declines_when_pickup_window_has_expired (test_taxi_bidding.TaxiBiddingTests.test_declines_when_pickup_window_has_expired) ... ok
+test_declines_when_taxi_cannot_reach_before_wait_limit (test_taxi_bidding.TaxiBiddingTests.test_declines_when_taxi_cannot_reach_before_wait_limit) ... ok
+test_zero_minute_pickup_is_allowed_if_expected_return_is_positive (test_taxi_bidding.TaxiBiddingTests.test_zero_minute_pickup_is_allowed_if_expected_return_is_positive) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.001s
+
+OK
