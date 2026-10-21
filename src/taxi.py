@@ -431,25 +431,62 @@ class Taxi:
       # a hint that maybe some form of CSP solver with automated reasoning might be a good way of implementing this. But
       # other methodologies could work well. For best results you will almost certainly need to use probabilistic reasoning.
       def _bidOnFare(self, time, origin, destination, price):
-          NoCurrentPassengers = self._passenger is None
-          NoAllocatedFares = len([fare for fare in self._availableFares.values() if fare.allocated]) == 0
-          TimeToOrigin = self._world.travelTime(self._loc, self._world.getNode(origin[0], origin[1]))
-          TimeToDestination = self._world.travelTime(self._world.getNode(origin[0], origin[1]),
-                                                     self._world.getNode(destination[0], destination[1]))
-          FiniteTimeToOrigin = TimeToOrigin > 0
-          FiniteTimeToDestination = TimeToDestination > 0
-          CanAffordToDrive = self._account > TimeToOrigin
-          FairPriceToDestination = price > TimeToDestination
-          PriceBetterThanCost = FairPriceToDestination and FiniteTimeToDestination
-          FareExpiryInFuture = self._maxFareWait > self._world.simTime-time
-          EnoughTimeToReachFare = self._maxFareWait-self._world.simTime+time > TimeToOrigin
-          SufficientDrivingTime = FiniteTimeToOrigin and EnoughTimeToReachFare 
-          WillArriveOnTime = FareExpiryInFuture and SufficientDrivingTime
-          NotCurrentlyBooked = NoCurrentPassengers and NoAllocatedFares
-          CloseEnough = CanAffordToDrive and WillArriveOnTime
-          Worthwhile = PriceBetterThanCost and NotCurrentlyBooked 
-          Bid = CloseEnough and Worthwhile
-          return Bid
+          """Bid only when a fare has positive risk-adjusted expected return.
+
+          The taxi receives 90% of the quoted fare and pays £1 per simulated
+          minute while active. Travel-time estimates are uncertain, so this
+          estimates the chance that the passenger is still waiting at pickup,
+          then compares expected revenue with pickup and trip costs. The wait
+          model is a simple uniform-survival approximation over the taxi's
+          remaining estimated wait window.
+          """
+          # A taxi must be on the road, empty, and free of another allocation.
+          if self._loc is None or self._passenger is not None:
+              return False
+          if any(fare.allocated for fare in self._availableFares.values()):
+              return False
+
+          try:
+              price = float(price)
+              origin_node = self._world.getNode(origin[0], origin[1])
+              destination_node = self._world.getNode(destination[0], destination[1])
+              if origin_node is None or destination_node is None:
+                  return False
+              time_to_origin = float(self._world.travelTime(self._loc, origin_node))
+              time_to_destination = float(self._world.travelTime(origin_node, destination_node))
+          except (TypeError, ValueError, AttributeError, IndexError):
+              return False
+
+          # Negative, infinite, or NaN estimates mean the route cannot be
+          # evaluated reliably. A zero-minute pickup is valid.
+          if (not math.isfinite(price) or price <= 0 or
+              not math.isfinite(time_to_origin) or time_to_origin < 0 or
+              not math.isfinite(time_to_destination) or time_to_destination <= 0):
+              return False
+
+          elapsed_wait = max(0.0, float(self._world.simTime - time))
+          remaining_wait = float(self._maxFareWait) - elapsed_wait
+          if remaining_wait <= 0 or time_to_origin >= remaining_wait:
+              return False
+
+          # The taxi must be able to fund the approach even if the passenger
+          # cancels before collection.
+          if self._account <= time_to_origin:
+              return False
+
+          # Conditional on still waiting, the chance of surviving until pickup
+          # falls linearly as the estimated arrival approaches the wait limit.
+          probability_of_pickup = max(0.0, min(1.0,
+              (remaining_wait - time_to_origin) / remaining_wait))
+          expected_taxi_revenue = 0.9 * price
+          # A modest safety margin accounts for the fact that the simulator's
+          # travelTime is a heuristic and congestion can make real trips longer.
+          risk_adjusted_pickup_cost = 1.15 * time_to_origin
+          risk_adjusted_trip_cost = 1.25 * time_to_destination
+          expected_return = (probability_of_pickup *
+                             (expected_taxi_revenue - risk_adjusted_trip_cost)
+                             - risk_adjusted_pickup_cost)
+          return expected_return > 0.0
 
       # TODO (optional) improve on the abandon logic. Almost anything could be done here: interrogating the Nodes,
       # replanning the path, waiting, or whatever.
